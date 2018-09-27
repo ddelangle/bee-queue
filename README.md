@@ -4,12 +4,18 @@
 
 A simple, fast, robust job/task queue for Node.js, backed by Redis.
 
+
+This is a fork of [bee-queue](https://github.com/bee-queue/bee-queue) adding round-robin support.
+Documentation for that particular part is to come.
+
+
+
 - Simple: ~1000 LOC, and minimal dependencies.
 - Fast: maximizes throughput by minimizing Redis and network overhead. [Benchmarks](#benchmarks) well.
 - Robust: designed with concurrency, atomicity, and failure in mind; close to full code coverage.
 
 ```js
-const Queue = require('bee-queue');
+const Queue = require('bee-queue-round-robin');
 const queue = new Queue('example');
 
 const job = queue.createJob({x: 2, y: 3})
@@ -53,7 +59,7 @@ Thanks to the folks at [Mixmax](https://mixmax.com), Bee-Queue is once again bei
 ## Installation
 
 ```sh
-$ npm install bee-queue
+$ npm install bee-queue-round-robin
 ```
 
 You'll also need [Redis 2.8+](http://redis.io/topics/quickstart)* running somewhere.
@@ -112,7 +118,7 @@ Check out the [Arena](https://github.com/bee-queue/arena) web interface to manag
 [Queue](#queue) objects are the starting point to everything this library does. To make one, we just need to give it a name, typically indicating the sort of job it will process:
 
 ```js
-const Queue = require('bee-queue');
+const Queue = require('bee-queue-round-robin');
 const addQueue = new Queue('addition');
 ```
 
