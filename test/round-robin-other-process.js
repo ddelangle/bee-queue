@@ -30,17 +30,3 @@ rrQueue.on('job succeeded', function(job, result){
   // A job failed with reason `err`!
   console.log("failed", job, err)
 })
-
-
-
-setTimeout(() => {
-// rrQueue.process(2, function(job) {
-// 	return sleeper(200).then(() => console.log(job.data.account_id, job.data.toto, "A", job.id))
-// })
-
-rrQueue2.process(1, function(job) {
-	return sleeper(200).then(() => console.log(job.data.account_id, job.data.toto, "B", job.id))
-		.then(() => {throw new Error("pouet")})
-})
-
-}, 100)
