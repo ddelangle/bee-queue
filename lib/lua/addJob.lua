@@ -12,6 +12,11 @@ if jobId == "" then
 end
 if redis.call("hexists", KEYS[2], jobId) == 1 then return nil end
 redis.call("hset", KEYS[2], jobId, ARGV[2])
+if ARGV[3] ~= "" then
+	redis.call("sadd", ARGV[5], ARGV[3])
+	redis.call("lpush", ARGV[4], jobId)
+end
 redis.call("lpush", KEYS[3], jobId)
+
 
 return jobId
