@@ -3,6 +3,7 @@ key 1 -> bq:name:stallBlock
 key 2 -> bq:name:stalling
 key 3 -> bq:name:waiting
 key 4 -> bq:name:active
+key 5 -> bq:name:notified
 arg 1 -> ms stallInterval
 
 returns {resetJobId1, resetJobId2, ...}
@@ -30,6 +31,13 @@ if next(stalling) ~= nil then
     if removed > 0 then
       stalled[#stalled + 1] = jobId
     end
+    local removed2 = redis.call("lrem", KEYS[5], 0, jobId)
+    -- safety belts: we only restart stalled jobs if we can find them in the active list
+    -- the only place we add jobs to the stalling set is in this script, and the two places we
+    -- remove jobs from the active list are in this script, and in the MULTI after the job finishes
+    if removed2 > 0 then
+      stalled[#stalled + 1] = jobId
+    end
   end
   -- don't lpush zero jobs (the redis command will fail)
   if #stalled > 0 then
@@ -45,6 +53,10 @@ end
 local actives = redis.call("lrange", KEYS[4], 0, -1)
 if next(actives) ~= nil then
   redis.call("sadd", KEYS[2], unpack(actives))
+end
+local notifies = redis.call("lrange", KEYS[5], 0, -1)
+if next(notifies) ~= nil then
+  redis.call("sadd", KEYS[2], unpack(notifies))
 end
 
 return stalled
