@@ -1,7 +1,7 @@
 var Queue = require('../lib/queue');
 
-var rrQueue = new Queue("roundrobin_processing", {roundrobin:"account_id"})
-var rrQueue2 = new Queue("roundrobin_processing", {roundrobin:"account_id"})
+var rrQueue = new Queue("roundrobin_processing2", {roundrobin:"account_id"})
+var rrQueue2 = new Queue("roundrobin_processing2", {roundrobin:"account_id"})
 
 function sleeper(ms) {
     return new Promise(resolve => setTimeout(() => resolve(), ms));
@@ -14,8 +14,8 @@ function sleeper(ms) {
 
 //On balance 4 jobs par account
 setTimeout(() => {
-for(var i = 0; i<3; i++) {
-	for(var j = 0; j<4; j++) {
+for(var i = 1; i<5; i++) {
+	for(var j = 100; j<105-i; j++) {
 		console.log("create job", i, j)
 		rrQueue.createJob({toto:"toto_" + j, account_id:i}).timeout(2 * 60*1000).retries(1).save()
 	}
@@ -40,7 +40,7 @@ setTimeout(() => {
 
 rrQueue2.process(1, function(job) {
 	return sleeper(200).then(() => console.log(job.data.account_id, job.data.toto, "B", job.id))
-		.then(() => {throw new Error("pouet")})
+		//.then(() => {throw new Error("pouet")})
 })
 
 }, 100)
